@@ -4,15 +4,25 @@ import {
 	Component, View, bootstrap, NgFor
 } from 'angular2/angular2';
 
+@Component({
+	selector: '#{{id}}'
+})
+@View({
+	template: '<div style="display:none;" id="{{id}}">{{name}}</div>',
+})
 class MenuItem {
 	id: string;
 	name: string;
+	constructor(id: string, name: string) {
+		this.id = id;
+		this.name = name;
+	}
 }
 
 class Menu {
 	name: string;
 	items: Array<MenuItem[]>;
-	constructor(name, items) {
+	constructor(name: string, items) {
 		this.name = name;
 		this.items = items;
 	};
@@ -24,7 +34,7 @@ class Menu {
 })
 @View({
   templateUrl: 'menu.html',
-  directives: [NgFor]
+  directives: [NgFor, MenuItem]
 })
 
 // Component controller
@@ -45,79 +55,79 @@ class MyAppComponent {
 			"Teacher",
 			[
 
-				{
-					id: "search_courses",
-					name: "Search Courses"
-				},
-				{
-					id: "search_blogs",
-					name: "Search Blogs"
-				},
-				{
-					id: "search_students",
-					name: "Search for Students"
-				},
-				{
-					id: "search_teachers",
-					name: "Search for Teachers"
-				},
-				{
-					id: "teacher_courses",
-					name: "My Courses"
-				},
-				{
-					id: "teacher_newcourse",
-					name: "Add a New Course"
-				},
-				{
-					id: "teacher_manual",
-					name: "Teacher Manual"
-				},
-				{
-					id: "teacher_profile",
-					name: "Teacher Profile"
-				},
-				{
-					id: "teacher_delegate",
-					name: "Delegate to Another Teacher"
-				}
+				new MenuItem(
+					"search_courses",
+					"Search Courses"
+				),
+				new MenuItem(
+					"search_blogs",
+					"Search Blogs"
+				),
+				new MenuItem(
+					"search_students",
+					"Search for Students"
+				),
+				new MenuItem(
+					"search_teachers",
+					"Search for Teachers"
+				),
+				new MenuItem(
+					"teacher_courses",
+					"My Courses"
+				),
+				new MenuItem(
+					"teacher_newcourse",
+					"Add a New Course"
+				),
+				new MenuItem(
+					"teacher_manual",
+					"Teacher Manual"
+				),
+				new MenuItem(
+					"teacher_profile",
+					"Teacher Profile"
+				),
+				new MenuItem(
+					"teacher_delegate",
+					"Delegate to Another Teacher"
+				)
 			]
 		));
 	this.menus.push(new Menu(
 			"Student",
 			[
-				{
-					id: "search_courses",
-					name: "Search Courses"
-				},
-				{
-					id: "search_blogs",
-					name: "Search Blogs"
-				},
-				{
-					id: "search_students",
-					name: "Search for Students"
-				},
-				{
-					id: "search_teachers",
-					name: "Search for Teachers"
-				},
-				{
-					id: "student_courses",
-					name: "My Courses"
-				},
-				{
-					id: "student_newcourse",
-					name: "Sign up for a Course"
-				},
-				{
-					id: "student_manual",
-					name: "Student Manual"
-				},
-				{
-					id: "student_profile",
-					name: "Student Profile"
-				}
+				new MenuItem(
+					"search_courses",
+					"Search Courses"
+				),
+				new MenuItem(
+					"search_blogs",
+					"Search Blogs"
+				),
+				new MenuItem(
+					"search_students",
+					"Search for Students"
+				),
+				new MenuItem(
+					"search_teachers",
+					"Search for Teachers"
+				),
+				new MenuItem(
+					"student_courses",
+					"My Courses"
+				),
+				new MenuItem(
+					"student_newcourse",
+					"Sign up for a Course"
+				),
+				new MenuItem(
+					"student_manual",
+					"Student Manual"
+				),
+				new MenuItem(
+					"student_profile",
+					"Student Profile"
+				)
 			]));
    }
    onClick(id : string) {
