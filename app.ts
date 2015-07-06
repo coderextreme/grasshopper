@@ -58,64 +58,46 @@ var peers = new Call();
 	selector: 'project',
 })
 @View({
-	template: ' <div><video id="project" src="{{videoUrl}}" autoplay></video></div> <div><button (click)="answerCalls()">Answer Calls</button></div> <div><button (click)="call()">Call</button></div>',
+	template: ' <div id="project"><video id="myvideo" src="{{videoUrl}}" autoplay></video></div> <div><button (click)="answerCalls()">Answer Calls</button></div> <video id="peervideo" src="{{videoUrl}}" autoplay></video><div><button (click)="call()">Call</button></div>',
 })
 class ProjectVideoComponent {
     videoUrl: string;
+    myStream: MediaStream;
     constructor() {
 	navigator.getUserMedia  = navigator.getUserMedia ||
 				  navigator.webkitGetUserMedia ||
 				  navigator.mozGetUserMedia ||
 				  navigator.msGetUserMedia;
 
-	this.videoUrl = "foo.mp4";
-    }
-    answerCalls() {
-	var peer = new Peer(peers.getTeacherValue(), {key: 'mnd6i13qm362bj4i'});
-	peer.on('call', this.answer)
-    }
-/*
-    recordAudio(stream) {
-	window.AudioContext = window.AudioContext ||
-                      window.webkitAudioContext;
-
-	var context = new AudioContext();
-
-	var microphone = context.createMediaStreamSource(stream);
-  	var filter = context.createBiquadFilter();
-
-  	// microphone -> filter -> destination.
-  	microphone.connect(filter);
-    }
-*/
-    call() {
 	if (navigator.getUserMedia) {
 		var errorCallback = function(e) {
 		    alert('Call failed!');
 		};
-		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(stream) {
-			var peer = new Peer(peers.getStudentValue(), {key: 'mnd6i13qm362bj4i'});
-			var call = peer.call(peers.getTeacherValue(), stream);
-			call.on('stream', function(remoteStream) {
-				var video = document.getElementById('project');
-				video.src = window.URL.createObjectURL(remoteStream);
-			});
+		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(myStream) {
+			var myvideo = document.getElementById('myvideo');
+			myvideo.src = window.URL.createObjectURL(myStream);
+			this.myStream = myStream;
 		}, errorCallback);
 	}
+	this.videoUrl = "foo.mp4";
     }
-    answer(call) {
-	if (navigator.getUserMedia) {
-		var errorCallback = function(e) {
-		    alert('Answer failed!');
-		};
-		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(stream) {
-			call.answer(stream); // Answer the call with an A/V stream.
-			call.on('stream', function(remoteStream) {
-				var video = document.getElementById('project');
-				video.src = window.URL.createObjectURL(remoteStream);
-			});
-		}, errorCallback);
-	}
+    answerCalls() {
+	var peer = new Peer(peers.getTeacherValue(), {key: 'mnd6i13qm362bj4i'});
+	peer.on('call', function (call) {
+		call.answer(myStream); // Answer the call with an A/V stream.
+		call.on('stream', function(peerStream) {
+			var peervideo = document.getElementById('peervideo');
+			peervideo.src = window.URL.createObjectURL(peerStream);
+		});
+	});
+    }
+    call() {
+	var peer = new Peer(peers.getStudentValue(), {key: 'mnd6i13qm362bj4i'});
+	var call = peer.call(peers.getTeacherValue(), myStream);
+	call.on('stream', function(peerStream) {
+		var peervideo = document.getElementById('peervideo');
+		peervideo.src = window.URL.createObjectURL(peerStream);
+	});
     }
 }
 
