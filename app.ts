@@ -7,9 +7,6 @@ import {
 @Component({
 	selector: '#{{id}}'
 })
-@View({
-	template: '<div style="display:none;" id="{{id}}">{{name}}</div>',
-})
 class MenuItem {
 	id: string;
 	name: string;
@@ -28,13 +25,107 @@ class Menu {
 	};
 }
 
+@Component({
+	selector: '#call',
+})
+class Call {
+  teacher: HTMLInputElement;
+  student: HTMLInputElement;
+  constructor() {
+	this.student = document.getElementById('student');
+	if (this.student !== null) {
+		this.student.value = "student";
+	}
+	this.teacher = document.getElementById('teacher');
+	if (this.teacher !== null) {
+		this.teacher.value = "teacher";
+	}
+  }
+  getTeacherValue() {
+	this.teacher = document.getElementById('teacher');
+	return this.teacher.value;
+
+  }
+  getStudentValue() {
+	this.student = document.getElementById('student');
+	return this.student.value;
+  }
+}
+
+var peers = new Call();
+
+@Component({
+	selector: 'project',
+})
+@View({
+	template: ' <div><video id="project" src="{{videoUrl}}" autoplay></video></div> <div><button (click)="answerCalls()">Answer Calls</button></div> <div><button (click)="call()">Call</button></div>',
+})
+class ProjectVideoComponent {
+    videoUrl: string;
+    constructor() {
+	navigator.getUserMedia  = navigator.getUserMedia ||
+				  navigator.webkitGetUserMedia ||
+				  navigator.mozGetUserMedia ||
+				  navigator.msGetUserMedia;
+
+	this.videoUrl = "foo.mp4";
+    }
+    answerCalls() {
+	var peer = new Peer(peers.getTeacherValue(), {key: 'mnd6i13qm362bj4i'});
+	peer.on('call', this.answer)
+    }
+/*
+    recordAudio(stream) {
+	window.AudioContext = window.AudioContext ||
+                      window.webkitAudioContext;
+
+	var context = new AudioContext();
+
+	var microphone = context.createMediaStreamSource(stream);
+  	var filter = context.createBiquadFilter();
+
+  	// microphone -> filter -> destination.
+  	microphone.connect(filter);
+    }
+*/
+    call() {
+	if (navigator.getUserMedia) {
+		var errorCallback = function(e) {
+		    alert('Call failed!');
+		};
+		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(stream) {
+			var peer = new Peer(peers.getStudentValue(), {key: 'mnd6i13qm362bj4i'});
+			var call = peer.call(peers.getTeacherValue(), stream);
+			call.on('stream', function(remoteStream) {
+				var video = document.getElementById('project');
+				video.src = window.URL.createObjectURL(remoteStream);
+			});
+		}, errorCallback);
+	}
+    }
+    answer(call) {
+	if (navigator.getUserMedia) {
+		var errorCallback = function(e) {
+		    alert('Answer failed!');
+		};
+		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(stream) {
+			call.answer(stream); // Answer the call with an A/V stream.
+			call.on('stream', function(remoteStream) {
+				var video = document.getElementById('project');
+				video.src = window.URL.createObjectURL(remoteStream);
+			});
+		}, errorCallback);
+	}
+    }
+}
+
 // Annotation section
 @Component({
   selector: 'my-app'
 })
 @View({
   templateUrl: 'menu.html',
-  directives: [NgFor, MenuItem]
+  directives: [NgFor, MenuItem, ProjectVideoComponent]
 })
 
 // Component controller
@@ -46,7 +137,7 @@ class MyAppComponent {
   menus: Array<Menu>;
   
   constructor() {
-    this.id = 'Alice';
+    this.id = 'teacher_project';
     this.teacherview = 'Alice';
     this.teachermodify = 'Alice';
     this.teacherdelegate = 'Alice';
@@ -78,6 +169,10 @@ class MyAppComponent {
 				new MenuItem(
 					"teacher_newcourse",
 					"Add a New Course"
+				),
+				new MenuItem(
+					"teacher_project",
+					"Project Course"
 				),
 				new MenuItem(
 					"teacher_manual",

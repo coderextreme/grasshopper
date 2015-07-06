@@ -1,3 +1,4 @@
+<div id="call">Answerer<input id="teacher" value="teacher"></input></div> <div>Caller<input id="student" value="student"></input><div>
 <div *ng-for="#menu of menus">
 	<div>{{menu.name}}</div>
 	<div *ng-for="#menuitem of menu.items">
@@ -7,10 +8,10 @@
 
 <div style="display:none;" id="search_blogs">Search Blogs</div>
 <div style="display:none;" id="search_courses">Search Courses</div>
-<div style="display:none;" id="search_students"><Search for Students/div>
+<div style="display:none;" id="search_students">Search for Students</div>
 <div style="display:none;" id="search_teachers">Search for Teachers</div>
 
-<div style="display:none;" id=student_courses"">My Courses</div>
+<div style="display:none;" id="student_courses">My Courses</div>
 <div style="display:none;" id="student_manual">Student Manual</div>
 <div style="display:none;" id="student_newcourse">Sign up for a Course</div>
 <div style="display:none;" id="student_profile">Student Profile</div>
@@ -18,5 +19,13 @@
 <div style="display:none;" id="teacher_courses">My Courses</div>
 <div style="display:none;" id="teacher_delegate">Delegate to a Teacher</div>
 <div style="display:none;" id="teacher_manual">Teacher Manual</div>
-<div style="display:none;" id="teacher_newcourse">Add a New Course</div>
+<div style="display:none;" id="teacher_newcourse">Add a New Course
+<form>
+Name Course: <input id="courseName" name="courseName" type="text"></input>
+Upload a video <input id="uploadVideo" name="uploadVideo" type="file"></input>
+</form>
+</div>
+<div style="display:none;" id="teacher_project"Project Course
+Name Course: <input id="courseName" name="courseName" type="text"></input>
+<project></project>
 <div style="display:none;" id="teacher_profile">Teacher Profile</div>
