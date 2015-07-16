@@ -71,7 +71,7 @@ class ProjectVideoComponent {
 
 	if (navigator.getUserMedia) {
 		var errorCallback = function(e) {
-		    alert('Call failed! '+e);
+		    alert('Call failed! '+JSON.stringify(e));
 		};
 		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(myStream) {
 			if (myStream === null || typeof myStream === 'undefined') {
@@ -82,7 +82,7 @@ class ProjectVideoComponent {
 			this.myStream = myStream;
 		}, errorCallback);
 	}
-	this.videoUrl = "foo.mp4";
+	this.videoUrl = "me.mov";
     }
     answerCalls() {
 	// var peer = new Peer(peers.getTeacherValue(), {key: 'mnd6i13qm362bj4i'});
