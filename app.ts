@@ -53,6 +53,7 @@ class Call {
 }
 
 var peers = new Call();
+var myStream = null;
 
 @Component({
 	selector: 'project',
@@ -62,7 +63,6 @@ var peers = new Call();
 })
 class ProjectVideoComponent {
     videoUrl: string;
-    myStream: MediaStream;
     constructor() {
 	navigator.getUserMedia  = navigator.getUserMedia ||
 				  navigator.webkitGetUserMedia ||
@@ -73,13 +73,14 @@ class ProjectVideoComponent {
 		var errorCallback = function(e) {
 		    alert('Call failed! '+JSON.stringify(e));
 		};
-		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(myStream) {
-			if (myStream === null || typeof myStream === 'undefined') {
+		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(stream) {
+			myStream = stream;
+			if (typeof myStream === 'undefined' || myStream === null) {
 				alert("Cannot retrieve your video in initialization");
+				return;
 			}
 			var myvideo = document.getElementById('myvideo');
 			myvideo.src = window.URL.createObjectURL(myStream);
-			this.myStream = myStream;
 		}, errorCallback);
 	}
 	this.videoUrl = "me.mov";
@@ -88,8 +89,9 @@ class ProjectVideoComponent {
 	// var peer = new Peer(peers.getTeacherValue(), {key: 'mnd6i13qm362bj4i'});
 	var peer = new Peer(peers.getTeacherValue(), {host: '52.10.34.169', port:9000});
 	peer.on('call', function (call) {
-			if (myStream === null || typeof myStream === 'undefined') {
+			if (typeof myStream === 'undefined' || myStream === null) {
 				alert("Cannot retrieve your video in answer");
+				return;
 			}
 		call.answer(myStream); // Answer the call with an A/V stream.
 		call.on('stream', function(peerStream) {
@@ -101,8 +103,9 @@ class ProjectVideoComponent {
     call() {
 	// var peer = new Peer(peers.getStudentValue(), {key: 'mnd6i13qm362bj4i'});
 	var peer = new Peer(peers.getStudentValue(), {host: '52.10.34.169', port:9000});
-	if (myStream === null || typeof myStream === 'undefined') {
+	if (myStream === null || typeof myStream === 'undefined' || myStream === null) {
 		alert("Cannot retrieve your video in call");
+		return;
 	}
 	var call = peer.call(peers.getTeacherValue(), myStream);
 	call.on('stream', function(peerStream) {
