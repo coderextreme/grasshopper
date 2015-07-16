@@ -71,9 +71,12 @@ class ProjectVideoComponent {
 
 	if (navigator.getUserMedia) {
 		var errorCallback = function(e) {
-		    alert('Call failed!');
+		    alert('Call failed! '+e);
 		};
 		navigator.getUserMedia({audio:true, video:{mandatory:{minWidth:1280,minHeight:720}}}, function(myStream) {
+			if (myStream === null || typeof myStream === 'undefined') {
+				alert("Cannot retrieve your video in initialization");
+			}
 			var myvideo = document.getElementById('myvideo');
 			myvideo.src = window.URL.createObjectURL(myStream);
 			this.myStream = myStream;
@@ -85,6 +88,9 @@ class ProjectVideoComponent {
 	// var peer = new Peer(peers.getTeacherValue(), {key: 'mnd6i13qm362bj4i'});
 	var peer = new Peer(peers.getTeacherValue(), {host: '52.10.34.169', port:9000});
 	peer.on('call', function (call) {
+			if (myStream === null || typeof myStream === 'undefined') {
+				alert("Cannot retrieve your video in answer");
+			}
 		call.answer(myStream); // Answer the call with an A/V stream.
 		call.on('stream', function(peerStream) {
 			var peervideo = document.getElementById('peervideo');
@@ -95,6 +101,9 @@ class ProjectVideoComponent {
     call() {
 	// var peer = new Peer(peers.getStudentValue(), {key: 'mnd6i13qm362bj4i'});
 	var peer = new Peer(peers.getStudentValue(), {host: '52.10.34.169', port:9000});
+	if (myStream === null || typeof myStream === 'undefined') {
+		alert("Cannot retrieve your video in call");
+	}
 	var call = peer.call(peers.getTeacherValue(), myStream);
 	call.on('stream', function(peerStream) {
 		var peervideo = document.getElementById('peervideo');
